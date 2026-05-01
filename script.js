@@ -173,7 +173,59 @@ function VideoCard(video) {
     `;
 }
 
+const randomTitles = [
+    "Aprenda JavaScript em 10 minutos",
+    "Dicas para estudar melhor",
+    "Gameplay insana!",
+    "Como ganhar dinheiro programando",
+    "Rotina de um dev",
+    "Top curiosidades da internet",
+];
+
+const randomChannels = [
+    "Dev BR",
+    "CodeLab",
+    "Vida Tech",
+    "Explora Mundo",
+    "Canal Aleatório",
+    "Conteúdo Pro",
+];
+
+const categories = ["study", "entertainment"];
+
+function generateRandomVideo(id) {
+    const random = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+    return {
+        thumb: `https://picsum.photos/seed/${Math.random()}/500/280`,
+        channelImg: `https://i.pravatar.cc/40?img=${Math.floor(Math.random() * 70)}`,
+        title: random(randomTitles),
+        channel: random(randomChannels),
+        views: `${Math.floor(Math.random() * 200)}k visualizações`,
+        time: `há ${Math.floor(Math.random() * 10) + 1} dias`,
+        duration: `${Math.floor(Math.random() * 59)}:${Math.floor(Math.random() * 59).toString().padStart(2, '0')}`,
+        category: random(categories)
+    };
+}
+
+// Render inicial
 grid.innerHTML = videos.map(VideoCard).join("");
+
+// Sentinel - elemento invisível no fim da página
+const sentinel = document.createElement('div');
+sentinel.id = 'sentinel';
+sentinel.style.cssText = 'height:1px; width:100%;';
+document.getElementById('content').appendChild(sentinel);
+
+// Infinite scroll
+const observer = new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting) {
+        const newVideos = Array.from({ length: 12 }, (_, i) => generateRandomVideo(i));
+        grid.innerHTML += newVideos.map(VideoCard).join("");
+    }
+}, { rootMargin: '200px' });
+
+observer.observe(sentinel);
 
 // -------------------------------
 // SIDEBAR
